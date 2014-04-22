@@ -9,6 +9,7 @@ def save_history(cls):
 
     cls._fields['history'] = ListField(DictField, default=[])
 
+
     def __init__(instance, *args, **kwargs):
         """ Initializes empty list of history records, then calls original __init__.
         """
@@ -29,6 +30,7 @@ def save_history(cls):
         document.history.append(record)
         super(cls, document).pre_save(sender, document, **kwargs)
     cls.pre_save = pre_save
+
 
     signals.pre_save.connect(cls.pre_save, sender=cls)
 

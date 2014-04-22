@@ -17,13 +17,41 @@ Assuming you're connected to mongoengine:
 from mongoengine import Document, StringField
 from document_history import save_history
 
-@save_history
-class ImportantDocument(Document):
-    title = StringField()
-    
-    
-my_doc = ImportantDocument()
-my_doc.title = "Life Is Good"
-my_doc.save()
+book = Book(
+    title="Mother Night",
+    caption="We must be careful about what we pretend to be."
+).save()
 
+history = book.history
+print history
+# [
+#         {
+#             'timestamp': datetime.datetime(2014, 4, 22, 16, 27, 40, 715871), 
+#             'changes': {
+#                 'caption': u'We must be careful about what we pretend to be.', 
+#                 'title': u'Mother Night'
+#             }
+#         }
+# ]
+
+book.title = "Cat's Cradle"
+book.save()
+
+history = book.history
+print history
+# [
+#         {
+#             'timestamp': datetime.datetime(2014, 4, 22, 16, 29, 29, 873231), 
+#             'changes': {
+#                 'caption': u'We must be careful about what we pretend to be.', 
+#                 'title': u'Mother Night'
+#             }
+#         }, 
+#         {
+#             'timestamp': datetime.datetime(2014, 4, 22, 16, 29, 29, 874008), 
+#             'changes': {
+#                 'title': u"Cat's Cradle"
+#             }
+#         }
+# ]
 ```

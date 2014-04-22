@@ -11,13 +11,15 @@ def establish_mongo_connection():
     mongoengine.connect(mongo_name, port=mongo_port)
 
 
+establish_mongo_connection()
+
+
 @save_history
 class Book(Document):
     title = StringField()
     caption = StringField()
 
 
-establish_mongo_connection()
 book = Book(
     title="Mother Night",
     caption="We must be careful about what we pretend to be."
