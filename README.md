@@ -1,11 +1,16 @@
 document_history
 ================
 
-Adds history and versioning for MongoDB documents using mongoengine
+Adds history and versionning for MongoDB documents with mongoengine.
+Saves all document changes in 'history' field inside the document, along 
+with the timestamp of when the change was made, and all the fields that were updated.
+It will save a record everytime a document is saved or updated.
 
+Supports: MongoEngine
 
 Installation:
 -------------
+`pip install document_history`
 
 
 Usage:
