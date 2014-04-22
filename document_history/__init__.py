@@ -28,7 +28,6 @@ def save_history(cls):
         record['timestamp'] = datetime.now()
         record['changes'] = delta
         document.history.append(record)
-        super(cls, document).pre_save(sender, document, **kwargs)
     cls.pre_save = pre_save
 
 
