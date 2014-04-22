@@ -1,11 +1,27 @@
-document_history
-================
+MongoDB Document Changes History
+================================
 
-Adds history and versioning for MongoDB documents using mongoengine
+This package offers you a class decorator (`@save_history`) that you can 
+maintain the document field changes inside a `history` field inside the document.
+`history` is saved as a list of dictionaries, each object inside the list has:
+   * `timestamp`: specifies when the changes were made
+   * `changes`: a dictionary that maintains the changes, the keys represent the 
+        names of the fields changed, the values represent the values they were
+        changed to.
 
+The `history` list of records will update whenever a document is saved or is updated.
+
+Supports: MongoEngine
 
 Installation:
 -------------
+`pip install document_history`
+
+or 
+
+`git clone git@github.com:Martikos/document_history.git`
+
+`python setup.py install`
 
 
 Usage:
@@ -17,13 +33,18 @@ Assuming you're connected to mongoengine:
 from mongoengine import Document, StringField
 from document_history import save_history
 
-book = Book(
+
+@save_history
+class Book(Document):
+    title = StringField()
+    caption = StringField()
+
+document = Book(
     title="Mother Night",
     caption="We must be careful about what we pretend to be."
 ).save()
 
-history = book.history
-print history
+print document.history
 # [
 #         {
 #             'timestamp': datetime.datetime(2014, 4, 22, 16, 27, 40, 715871), 
@@ -34,11 +55,10 @@ print history
 #         }
 # ]
 
-book.title = "Cat's Cradle"
-book.save()
+document.title = "Cat's Cradle"
+document.save()
 
-history = book.history
-print history
+print document.history
 # [
 #         {
 #             'timestamp': datetime.datetime(2014, 4, 22, 16, 29, 29, 873231), 
