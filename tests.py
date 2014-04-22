@@ -33,7 +33,7 @@ def requires_mongoengine(func):
 
 def test_document_history():
 
-    @save_history
+    @save_history(limit=2)
     class VeryImportantDocument(Document):
         title = StringField()
         comment = StringField()
