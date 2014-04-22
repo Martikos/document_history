@@ -16,12 +16,6 @@ def save_history(cls):
         super(cls, instance).__init__(*args, **kwargs)
     cls.__init__ = __init__
 
-    @property
-    def history_changes(instance):
-        """ Returns a list of history changes sorted by date.
-        """
-        return sorted(instance.history, key=lambda record: record['timestamp'])
-    cls.history_changes = history_changes
 
     @classmethod
     def pre_save(cls, sender, document, **kwargs):
@@ -33,6 +27,7 @@ def save_history(cls):
         record['timestamp'] = datetime.now()
         record['changes'] = delta
         document.history.append(record)
+        super(cls, document).pre_save(sender, document, **kwargs)
     cls.pre_save = pre_save
 
     signals.pre_save.connect(cls.pre_save, sender=cls)

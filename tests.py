@@ -5,6 +5,7 @@ from nose.tools import *
 from nose.tools import assert_raises
 
 from mongoengine import Document, StringField
+from mongoengine.connection import _get_db
 
 
 try:
@@ -14,8 +15,8 @@ except ImportError:
 
 
 def establish_mongo_connection():
-    mongo_name = os.environ.get('DH_MONGO_DB_NAME', 'test_document_history')
-    mongo_port = int(os.environ.get('DH_MONGO_DB_PORT', 27017))
+    mongo_name = os.environ.get("DH_MONGO_DB_NAME", "test_document_history")
+    mongo_port = int(os.environ.get("DH_MONGO_DB_PORT", 27017))
     mongoengine.connect(mongo_name, port=mongo_port)
 
 
@@ -33,31 +34,39 @@ def requires_mongoengine(func):
 
 def test_document_history():
 
-    @save_history(limit=2)
-    class VeryImportantDocument(Document):
+    @save_history
+    class Book(Document):
         title = StringField()
-        comment = StringField()
+        caption = StringField()
 
     establish_mongo_connection()
 
-    vid = VeryImportantDocument()
+    book = Book()
     title_string = "Mother Night"
-    vid.title = title_string
-    vid.save()
+    book.title = title_string
+    book.save()
 
-    history = vid.history
+    history = book.history
     eq_(len(history), 1)
-    eq_(history[0]['changes']['title'], title_string)
+    eq_(history[0]["changes"]["title"], title_string)
 
 
-    comment_string = "We must be careful about what we pretend to be."
+    caption_string = "We must be careful about what we pretend to be."
 
-    vid.comment = comment_string
-    vid.save()
+    book.caption = caption_string
+    book.save()
 
-    history = vid.history
+    history = book.history
+
     eq_(len(history), 2)
-    eq_(history[1]['changes']['comment'], comment_string)
+    eq_(history[1]["changes"]["caption"], caption_string)
+
+
+    # Clear database
+    db = _get_db()
+    collection_names = [c for c in db.collection_names() if not c.startswith("system.")]
+    for collection in collection_names:
+        db.drop_collection(collection)
 
 
 
