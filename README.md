@@ -22,13 +22,19 @@ Assuming you're connected to mongoengine:
 from mongoengine import Document, StringField
 from document_history import save_history
 
-book = Book(
+
+@save_history
+class Book(Document):
+    title = StringField()
+    caption = StringField()
+
+
+document = Book(
     title="Mother Night",
     caption="We must be careful about what we pretend to be."
 ).save()
 
-history = book.history
-print history
+print document.history
 # [
 #         {
 #             'timestamp': datetime.datetime(2014, 4, 22, 16, 27, 40, 715871), 
@@ -39,11 +45,9 @@ print history
 #         }
 # ]
 
-book.title = "Cat's Cradle"
-book.save()
+document.title = "Cat's Cradle"
 
-history = book.history
-print history
+print document.history
 # [
 #         {
 #             'timestamp': datetime.datetime(2014, 4, 22, 16, 29, 29, 873231), 
