@@ -9,7 +9,7 @@ def get_packages():
 
     return packages
 
-required_modules = ['mongoengine']
+required_modules = ['mongoengine', 'blinker']
 
 setup(name='document_history',
       version='0.1',

@@ -13,13 +13,14 @@ def save_history(cls):
         """ Initializes empty list of history records, then calls original __init__.
         """
         instance.history = []
-        super(cls, instance).__init__(args, kwargs)
+        super(cls, instance).__init__(*args, **kwargs)
     cls.__init__ = __init__
 
-    def history_changes(self):
+    @property
+    def history_changes(instance):
         """ Returns a list of history changes sorted by date.
         """
-        return sorted(history, key=lambda record: record['timestamp'])
+        return sorted(instance.history, key=lambda record: record['timestamp'])
     cls.history_changes = history_changes
 
     @classmethod
@@ -28,8 +29,10 @@ def save_history(cls):
         """
         document.updated_on = datetime.now()
         delta = dict(document._delta()[0])
-        delta['timestamp'] = datetime.now()
-        document.history.append(delta)
+        record = dict()
+        record['timestamp'] = datetime.now()
+        record['changes'] = delta
+        document.history.append(record)
     cls.pre_save = pre_save
 
     signals.pre_save.connect(cls.pre_save, sender=cls)
