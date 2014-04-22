@@ -1,10 +1,15 @@
-document_history
-================
+MongoDB Document Changes History
+================================
 
-Adds history and versionning for MongoDB documents with mongoengine.
-Saves all document changes in 'history' field inside the document, along 
-with the timestamp of when the change was made, and all the fields that were updated.
-It will save a record everytime a document is saved or updated.
+This package offers you a class decorator (`@save_history`) that you can 
+maintain the document field changes inside a `history` field inside the document.
+`history` is saved as a list of dictionaries, each object inside the list has:
+   * `timestamp`: specifies when the changes were made
+   * `changes`: a dictionary that maintains the changes, the keys represent the 
+        names of the fields changed, the values represent the values they were
+        changed to.
+
+The `history` list of records will update whenever a document is saved or is updated.
 
 Supports: MongoEngine
 
@@ -28,7 +33,6 @@ class Book(Document):
     title = StringField()
     caption = StringField()
 
-
 document = Book(
     title="Mother Night",
     caption="We must be careful about what we pretend to be."
@@ -46,6 +50,7 @@ print document.history
 # ]
 
 document.title = "Cat's Cradle"
+document.save()
 
 print document.history
 # [
