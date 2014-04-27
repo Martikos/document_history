@@ -62,6 +62,9 @@ def test_document_history():
     eq_(history[1]["changes"]["caption"], caption_string)
 
 
+    book.revert_to(2)
+
+
     # Clear database
     db = _get_db()
     collection_names = [c for c in db.collection_names() if not c.startswith("system.")]
